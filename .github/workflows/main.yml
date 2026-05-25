@@ -1,0 +1,36 @@
+name: LNMU Live Notice Scraper
+
+on:
+  schedule:
+    # यह कोड हर घंटे अपने आप चलेगा
+    - cron: '0 * * * *'
+  workflow_dispatch: # इससे आप खुद भी बटन दबाकर इसे चला सकते हैं
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository Code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-python: '3.10'
+
+    - name: Install Libraries
+      run: |
+        pip install requests beautifulsoup4
+
+    - name: Run Scraper Script
+      run: |
+        python scraper.py
+
+    - name: Commit and Push Updates
+      run: |
+        git config --global user.name "Sanjeev-Bot"
+        git config --global user.email "sanjeev-bot@github.com"
+        git add notices.json
+        git commit -m "Live Data Updated by AI Engine" || exit 0
+        git push
